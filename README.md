@@ -1,3 +1,33 @@
+# Modified Golang build pack providing gdaldem support
+
+Spin up a Docker container. Using Ubuntu Trusty, which at the time of writing is what cflinusfs2 is based on, and so should be compatible with the go build pack.
+
+```console
+$ docker run -it ubuntu:14.04 /bin/bash
+```
+
+Inside this base image, install the required runtime dependencies - in our case gdal-bin (which includes gdaldem).
+
+```console
+$ apt-get update
+$ apt-get install gdal-bin
+$ exit
+```
+
+Now, we will use docker diff and docker cp to get a list of added or changed .so files and copy them to our vendor directory. We will also need the executable itself. These binaries are added to a tarball.
+
+```console
+$ mkdir -p vendor/gdaldem
+$ docker ps -a
+$ docker cp <container>:/usr/bin/gdaldem gdaldem/.
+$ docker diff <container> | grep '\.so\.' | tr -d '^[^AC]' | while read -r line; do
+    docker cp <container>:$line gdaldem/.
+done
+$ mkdir -p vendor/gdaldem/libs
+$ mv vendor/gdaldem/*.so* vendor/gdaldem/libs/.
+$ tar -cvzf vendor/gdaldem.tar.gz vendor/gdaldem/*
+```
+
 # CloudFoundry build pack: Go(Lang)
 
 A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for Go(lang) based apps.
@@ -47,7 +77,7 @@ For the Go buildpack, use [Godep](https://github.com/tools/godep):
 1. Use in Cloud Foundry
 
     Upload the buildpack to your Cloud Foundry and optionally specify it by name
-        
+
     ```bash
     cf create-buildpack custom_go_buildpack go_buildpack-cached-custom.zip 1
     cf push my_app -b custom_go_buildpack
@@ -69,7 +99,7 @@ Staging failed: Buildpack compilation step failed
 ```
 
 ## Testing
-Buildpacks use the [Machete](https://github.com/cloudfoundry/machete) framework for running integration tests. 
+Buildpacks use the [Machete](https://github.com/cloudfoundry/machete) framework for running integration tests.
 
 To test a buildpack, run the following command from the buildpack's directory:
 
@@ -77,7 +107,7 @@ To test a buildpack, run the following command from the buildpack's directory:
 BUNDLE_GEMFILE=cf.Gemfile bundle exec buildpack-build
 ```
 
-More options can be found on Machete's [Github page.](https://github.com/cloudfoundry/machete) 
+More options can be found on Machete's [Github page.](https://github.com/cloudfoundry/machete)
 
 ## Contributing
 
@@ -112,7 +142,7 @@ the relevant Postgres header files in `vendor/include/postgresql/` in your app.
 
 ## Help and Support
 
-Join the #buildpacks channel in our [Slack community] (http://slack.cloudfoundry.org/) 
+Join the #buildpacks channel in our [Slack community] (http://slack.cloudfoundry.org/)
 
 ## Reporting Issues
 
