@@ -271,4 +271,5 @@ tar xzf $buildpack/vendor/gdaldem.tar.gz -C $HOME/app
 
 # Update the PATH
 step "Building runtime environment"
-echo "export LD_LIBRARY_PATH=\"\$HOME/app/libs/\";"
+echo "export PATH=\"\$HOME/vendor/:\$PATH\";"
+echo "export LD_LIBRARY_PATH=\"\$HOME/vendor/libs/\";"
