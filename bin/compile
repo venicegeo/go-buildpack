@@ -267,9 +267,8 @@ cp $buildpack/vendor/concurrency.sh $build/.profile.d/
 
 # Add gdaldem binary and libraries to path
 step "Adding gdaldem support"
-tar xzf $buildpack/vendor/gdaldem.tar.gz -C $build/vendor/
+tar xzf $buildpack/vendor/gdaldem.tar.gz -C $HOME/bin
 
 # Update the PATH
 step "Building runtime environment"
-echo "export PATH=\"\$build/vendor/:\$PATH\";"
-echo "export LD_LIBRARY_PATH=\"\$build/vendor/libs/\";"
+echo "export LD_LIBRARY_PATH=\"\$HOME/bin/libs/\";"
