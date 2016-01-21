@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
-echo "--- {}"
+cat << EOF
+---
+config_vars:
+  PATH: /home/vcap/app/vendor:/bin:/usr/bin:/home/vcap/app/bin
+  LD_LIBRARY_PATH: /home/vcap/app/vendor/libs
+EOF
